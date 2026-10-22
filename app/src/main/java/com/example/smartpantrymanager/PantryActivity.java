@@ -13,7 +13,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class PantryActivity extends AppCompatActivity {
 
@@ -57,7 +62,6 @@ public class PantryActivity extends AppCompatActivity {
             finish();
         });
 
-        // Allow users to edit or delete an ingredient.
         listPantryIngredients.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     showIngredientOptions(position);
@@ -113,7 +117,14 @@ public class PantryActivity extends AppCompatActivity {
 
                 if (expiryDate != null
                         && !expiryDate.trim().isEmpty()) {
-                    item += "\nExpiry date: " + expiryDate;
+
+                    item += "\nExpiry date: " + expiryDate.trim();
+
+                    String warning = getExpiryWarning(expiryDate.trim());
+
+                    if (!warning.isEmpty()) {
+                        item += "\n" + warning;
+                    }
                 }
 
                 ingredients.add(item);
@@ -136,6 +147,51 @@ public class PantryActivity extends AppCompatActivity {
             tvPantryEmpty.setVisibility(View.GONE);
             listPantryIngredients.setVisibility(View.VISIBLE);
         }
+    }
+
+    // Checks whether an ingredient has expired or is expiring soon.
+    private String getExpiryWarning(String expiryDate) {
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        dateFormat.setLenient(false);
+
+        try {
+            Date expiry = dateFormat.parse(expiryDate);
+
+            if (expiry == null) {
+                return "";
+            }
+
+            // Get today's date without the time.
+            String todayString =
+                    dateFormat.format(new Date());
+
+            Date today = dateFormat.parse(todayString);
+
+            if (today == null) {
+                return "";
+            }
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(today);
+            calendar.add(Calendar.DAY_OF_YEAR, 3);
+            Date threeDaysFromNow = calendar.getTime();
+
+            if (expiry.before(today)) {
+                return "EXPIRED!";
+            } else if (expiry.equals(today)) {
+                return "Expires today!";
+            } else if (!expiry.after(threeDaysFromNow)) {
+                return "Expiring soon!";
+            }
+
+        } catch (ParseException e) {
+            // Do not show a warning for an invalid date.
+            return "";
+        }
+
+        return "";
     }
 
     private void showIngredientOptions(int position) {
@@ -171,6 +227,7 @@ public class PantryActivity extends AppCompatActivity {
         intent.putExtra("ingredient_id", ingredientId);
         startActivity(intent);
     }
+
     private void confirmDelete(int ingredientId) {
         String ingredientName = "this ingredient";
 
@@ -188,7 +245,9 @@ public class PantryActivity extends AppCompatActivity {
                 }
             }
         }
+
         final String nameToDelete = ingredientName;
+
         new AlertDialog.Builder(this)
                 .setTitle("Delete Ingredient")
                 .setMessage(
@@ -218,6 +277,7 @@ public class PantryActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
