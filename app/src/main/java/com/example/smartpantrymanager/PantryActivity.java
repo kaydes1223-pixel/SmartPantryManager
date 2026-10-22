@@ -171,12 +171,29 @@ public class PantryActivity extends AppCompatActivity {
         intent.putExtra("ingredient_id", ingredientId);
         startActivity(intent);
     }
-
     private void confirmDelete(int ingredientId) {
+        String ingredientName = "this ingredient";
+
+        try (Cursor cursor = databaseHelper.getAllIngredients()) {
+            while (cursor.moveToNext()) {
+                int currentId = cursor.getInt(
+                        cursor.getColumnIndexOrThrow(
+                                PantryDatabaseHelper.COLUMN_ID));
+
+                if (currentId == ingredientId) {
+                    ingredientName = cursor.getString(
+                            cursor.getColumnIndexOrThrow(
+                                    PantryDatabaseHelper.COLUMN_NAME));
+                    break;
+                }
+            }
+        }
+        final String nameToDelete = ingredientName;
         new AlertDialog.Builder(this)
                 .setTitle("Delete Ingredient")
                 .setMessage(
-                        "Are you sure you want to delete this ingredient?"
+                        "Are you sure you want to delete "
+                                + nameToDelete + "?"
                 )
                 .setPositiveButton("Delete", (dialog, which) -> {
                     boolean deleted =
@@ -185,7 +202,7 @@ public class PantryActivity extends AppCompatActivity {
                     if (deleted) {
                         Toast.makeText(
                                 this,
-                                "Ingredient deleted.",
+                                nameToDelete + " deleted.",
                                 Toast.LENGTH_SHORT
                         ).show();
 
@@ -201,7 +218,6 @@ public class PantryActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .show();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
