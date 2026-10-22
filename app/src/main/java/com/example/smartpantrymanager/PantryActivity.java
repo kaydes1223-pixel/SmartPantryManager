@@ -57,15 +57,9 @@ public class PantryActivity extends AppCompatActivity {
             finish();
         });
 
-        // Test whether an ingredient tap is detected.
+        // Allow users to edit or delete an ingredient.
         listPantryIngredients.setOnItemClickListener(
                 (parent, view, position, id) -> {
-                    Toast.makeText(
-                            PantryActivity.this,
-                            "Ingredient clicked!",
-                            Toast.LENGTH_SHORT
-                    ).show();
-
                     showIngredientOptions(position);
                 }
         );
