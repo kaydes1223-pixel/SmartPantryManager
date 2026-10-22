@@ -6,6 +6,7 @@ import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+// Main screen for the Smart Pantry Manager app.
 public class MainActivity extends AppCompatActivity {
 
     @Override
