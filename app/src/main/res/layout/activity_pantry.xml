@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="#F5F7F2">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Pantry"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#244C3A"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/tvPantryEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Your pantry is empty. Add an ingredient to get started."
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp" />
+
+    <ListView
+        android:id="@+id/listPantryIngredients"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#D8DFD5"
+        android:dividerHeight="1dp" />
+
+    <Button
+        android:id="@+id/btnPantryAddIngredient"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add Ingredient" />
+
+    <Button
+        android:id="@+id/btnPantryBack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back to Home" />
+
+</LinearLayout>
