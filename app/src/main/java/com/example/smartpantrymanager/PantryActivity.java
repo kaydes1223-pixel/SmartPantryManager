@@ -98,9 +98,21 @@ public class PantryActivity extends AppCompatActivity {
                         cursor.getColumnIndexOrThrow(
                                 PantryDatabaseHelper.COLUMN_EXPIRY_DATE));
 
-                String item = name + " - " + quantity + " " + unit;
+                // Display whole numbers without .0.
+                String formattedQuantity;
 
-                if (expiryDate != null && !expiryDate.trim().isEmpty()) {
+                if (quantity == (long) quantity) {
+                    formattedQuantity =
+                            String.valueOf((long) quantity);
+                } else {
+                    formattedQuantity = String.valueOf(quantity);
+                }
+
+                String item = name + " - "
+                        + formattedQuantity + " " + unit;
+
+                if (expiryDate != null
+                        && !expiryDate.trim().isEmpty()) {
                     item += "\nExpiry date: " + expiryDate;
                 }
 
