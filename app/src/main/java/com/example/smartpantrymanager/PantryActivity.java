@@ -120,7 +120,8 @@ public class PantryActivity extends AppCompatActivity {
 
                     item += "\nExpiry date: " + expiryDate.trim();
 
-                    String warning = getExpiryWarning(expiryDate.trim());
+                    String warning =
+                            getExpiryWarning(expiryDate.trim());
 
                     if (!warning.isEmpty()) {
                         item += "\n" + warning;
@@ -149,7 +150,7 @@ public class PantryActivity extends AppCompatActivity {
         }
     }
 
-    // Checks whether an ingredient has expired or is expiring soon.
+    // Displays an expiry warning with the days remaining.
     private String getExpiryWarning(String expiryDate) {
         SimpleDateFormat dateFormat =
                 new SimpleDateFormat("yyyy-MM-dd", Locale.US);
@@ -164,30 +165,43 @@ public class PantryActivity extends AppCompatActivity {
             }
 
             // Get today's date without the time.
-            String todayString =
-                    dateFormat.format(new Date());
-
+            String todayString = dateFormat.format(new Date());
             Date today = dateFormat.parse(todayString);
 
             if (today == null) {
                 return "";
             }
 
+            if (expiry.before(today)) {
+                return "EXPIRED!";
+            }
+
+            if (expiry.equals(today)) {
+                return "Expires today!";
+            }
+
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(today);
             calendar.add(Calendar.DAY_OF_YEAR, 3);
+
             Date threeDaysFromNow = calendar.getTime();
 
-            if (expiry.before(today)) {
-                return "EXPIRED!";
-            } else if (expiry.equals(today)) {
-                return "Expires today!";
-            } else if (!expiry.after(threeDaysFromNow)) {
-                return "Expiring soon!";
+            if (!expiry.after(threeDaysFromNow)) {
+                long differenceInMillis =
+                        expiry.getTime() - today.getTime();
+
+                long daysRemaining = differenceInMillis
+                        / (24L * 60 * 60 * 1000);
+
+                if (daysRemaining == 1) {
+                    return "Expires in 1 day!";
+                }
+
+                return "Expires in " + daysRemaining + " days!";
             }
 
         } catch (ParseException e) {
-            // Do not show a warning for an invalid date.
+            // Ignore invalid expiry dates.
             return "";
         }
 
