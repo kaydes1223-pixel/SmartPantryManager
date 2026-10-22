@@ -8,6 +8,11 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class AddIngredientActivity extends AppCompatActivity {
 
     private EditText etIngredientName;
@@ -75,6 +80,26 @@ public class AddIngredientActivity extends AppCompatActivity {
         String unit = etUnit.getText().toString().trim();
         String expiryDate = etExpiryDate.getText().toString().trim();
 
+        // Validate the expiry date if one was entered.
+        if (!expiryDate.isEmpty()) {
+            SimpleDateFormat dateFormat =
+                    new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+            dateFormat.setLenient(false);
+
+            ParsePosition position = new ParsePosition(0);
+            Date parsedDate = dateFormat.parse(expiryDate, position);
+
+            if (parsedDate == null
+                    || position.getIndex() != expiryDate.length()) {
+                Toast.makeText(this,
+                        "Enter a valid expiry date in YYYY-MM-DD format.",
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // Check that all required fields have been entered.
         if (name.isEmpty() || quantityText.isEmpty() || unit.isEmpty()) {
             Toast.makeText(this,
                     "Please enter the name, quantity and unit.",
@@ -93,6 +118,7 @@ public class AddIngredientActivity extends AppCompatActivity {
             return;
         }
 
+        // Quantity must be greater than zero.
         if (quantity <= 0) {
             Toast.makeText(this,
                     "Quantity must be greater than zero.",
