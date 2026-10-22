@@ -141,11 +141,24 @@ public class PantryActivity extends AppCompatActivity {
 
         listPantryIngredients.setAdapter(adapter);
 
+        // Display the total number of saved ingredients.
         if (ingredients.isEmpty()) {
+            tvPantryEmpty.setText(
+                    "Your pantry is empty. Add an ingredient to get started."
+            );
             tvPantryEmpty.setVisibility(View.VISIBLE);
             listPantryIngredients.setVisibility(View.GONE);
         } else {
-            tvPantryEmpty.setVisibility(View.GONE);
+            int totalIngredients = ingredients.size();
+
+            tvPantryEmpty.setText(
+                    "Your pantry contains " + totalIngredients
+                            + (totalIngredients == 1
+                            ? " ingredient."
+                            : " ingredients.")
+            );
+
+            tvPantryEmpty.setVisibility(View.VISIBLE);
             listPantryIngredients.setVisibility(View.VISIBLE);
         }
     }
@@ -164,7 +177,6 @@ public class PantryActivity extends AppCompatActivity {
                 return "";
             }
 
-            // Get today's date without the time.
             String todayString = dateFormat.format(new Date());
             Date today = dateFormat.parse(todayString);
 
@@ -201,7 +213,6 @@ public class PantryActivity extends AppCompatActivity {
             }
 
         } catch (ParseException e) {
-            // Ignore invalid expiry dates.
             return "";
         }
 
